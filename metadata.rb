@@ -5,7 +5,7 @@ description      "Installs/Configures opensim"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.0.1"
 
-%w{ mysql }.each do |dep|
+%w{ mysql database }.each do |dep|
   depends dep
 end
 
