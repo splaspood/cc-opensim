@@ -1,0 +1,10 @@
+<% @regions.each do |region| %>
+[<%= region['id'] %>]
+RegionUUID = <%= region['uuid'] %>
+Location = <%= region['location'] %>
+InternalAddress = 0.0.0.0
+InternalPort = 9000
+AllowAlternatePorts = False
+ExternalHostName = SYSTEMIP
+
+<% end %>

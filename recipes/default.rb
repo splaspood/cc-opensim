@@ -23,8 +23,14 @@ package "mono-complete" do
   action :install
 end
 
+user "opensim" do
+  home node['opensim']['install_prefix']
+  shell "/bin/bash"
+  action :create
+end
+
 directory node['opensim']['install_prefix'] do
-  owner "root"
+  owner "opensim"
   group "root"
   mode "0755"
   action :create
@@ -35,11 +41,18 @@ remote_file "#{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['versio
   checksum node[:opensim][:checksum]
 end
 
-execute "tar zxvf #{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
+execute "tar zxf #{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
   cwd node['opensim']['install_prefix']
   creates "#{node['opensim']['install_prefix']}/opensim-#{node[:opensim][:version]}-bin"
 end
 
 link "#{node['opensim']['install_prefix']}/current" do
   to "#{node['opensim']['install_prefix']}/opensim-#{node[:opensim][:version]}-bin"
+end
+
+template "#{node['opensim']['install_prefix']}/current/bin/Regions/Regions.ini" do
+  owner "opensim"
+  mode "0644"
+  variables( :regions => search( :opensim_regions ) )
+  source "regions.ini.erb"
 end
