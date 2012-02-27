@@ -42,14 +42,14 @@ remote_file "#{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['versio
   checksum node[:opensim][:checksum]
 end
 
+execute "rm -r #{node['opensim']['install_prefix']}/opensim-#{node['opensim']['version']}-bin/bin/config-include" do
+  action :nothing
+end
+
 execute "tar zxf #{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
   cwd node['opensim']['install_prefix']
   creates "#{node['opensim']['install_prefix']}/opensim-#{node[:opensim][:version]}-bin"
   notifies :run, resources( :execute => "rm -r #{node['opensim']['install_prefix']}/opensim-#{node['opensim']['version']}-bin/bin/config-include" ), :immediately
-end
-
-execute "rm -r #{node['opensim']['install_prefix']}/opensim-#{node['opensim']['version']}-bin/bin/config-include" do
-  action :nothing
 end
 
 link "#{node['opensim']['install_prefix']}/current" do
