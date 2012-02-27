@@ -74,7 +74,7 @@ remote_directory "#{node['opensim']['install_prefix']}/config/config-include" do
 end
 
 %w{ config-include OpenSim.ini Asset.db  auth.db  avatars.db  friends.db  griduser.db  inventory.db  OpenSim.db  userprofiles.db }.each do |f|
-  link "#{node['opensim']['install_prefix']}/current/#{f}" do
+  link "#{node['opensim']['install_prefix']}/current/bin/#{f}" do
     to "#{node['opensim']['install_prefix']}/config/#{f}"
   end
 end
