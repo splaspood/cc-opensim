@@ -29,11 +29,12 @@ user "opensim" do
   action :create
 end
 
-directory node['opensim']['install_prefix'] do
+directory "#{node['opensim']['install_prefix']}/config" do
   owner "opensim"
   group "root"
   mode "0755"
   action :create
+  recursive true
 end
 
 remote_file "#{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
@@ -56,3 +57,26 @@ template "#{node['opensim']['install_prefix']}/current/bin/Regions/Regions.ini" 
   variables( :regions => search( :opensim_regions ) )
   source "regions.ini.erb"
 end
+
+cookbook_file "#{node['opensim']['install_prefix']}/config/OpenSim.ini" do
+  source "opensim.ini"
+  owner "opensim"
+  mode "644"
+  action :create_if_missing
+end
+
+remote_directory "#{node['opensim']['install_prefix']}/config/config-include" do
+  source "config-include"
+  owner "opensim"
+  files_mode "0644"
+  mode "0755"
+  overwrite false
+end
+
+%w{ config-include OpenSim.ini Asset.db  auth.db  avatars.db  friends.db  griduser.db  inventory.db  OpenSim.db  userprofiles.db }.each do |f|
+  link "#{node['opensim']['install_prefix']}/current/#{f}" do
+    to "#{node['opensim']['install_prefix']}/config/#{f}"
+  end
+end
+
+
