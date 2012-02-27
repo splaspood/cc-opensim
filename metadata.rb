@@ -1,5 +1,5 @@
 maintainer       "ParaVolve Development Corporation"
-maintainer_email "YOUR_EMAIL"
+maintainer_email "jwb@paravolve.net"
 license          "GNU Public License 2.0"
 description      "Installs/Configures opensim"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
