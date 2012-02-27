@@ -9,6 +9,6 @@ version          "0.0.1"
   depends dep
 end
 
-%{ ubuntu }.each do |sup|
+%w{ ubuntu }.each do |sup|
   supports sup
 end
