@@ -63,6 +63,13 @@ template "#{node['opensim']['install_prefix']}/current/bin/Regions/Regions.ini" 
   source "regions.ini.erb"
 end
 
+template "#{node['opensim']['install_prefix']}/config/config-include/StandaloneCommon.ini" do
+  owner "opensim"
+  mode "0644"
+  variables( :database_type => node['opensim']['database'] )
+  source "StandaloneCommon.ini.erb"
+end
+
 cookbook_file "#{node['opensim']['install_prefix']}/config/OpenSim.ini" do
   source "opensim.ini"
   owner "opensim"
