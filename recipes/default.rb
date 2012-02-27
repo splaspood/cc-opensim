@@ -23,13 +23,23 @@ package "mono-complete" do
   action :install
 end
 
-remote_file "#{Chef::Config[:file_cache_path]}/opensim.tar.gz" do
+directory node['opensim']['install_prefix'] do
+  owner "root"
+  group "root"
+  mode "0755"
+  action :create
+end
+
+remote_file "#{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
   source node[:opensim][:url]
   checksum node[:opensim][:checksum]
 end
 
-execute "tar zxvf opensim.tar.gz" do
-  cwd Chef::Config[:file_cache_path]
-  creates "#{Chef::Config[:file_cache_path]}/opensim-#{node[:opensim][:version]}-bin"
+execute "tar zxvf #{Chef::Config[:file_cache_path]}/opensim-#{node['opensim']['version']}.tar.gz" do
+  cwd node['opensim']['install_prefix']
+  creates "#{node['opensim']['install_prefix']}/opensim-#{node[:opensim][:version]}-bin"
 end
 
+link "#{node['opensim']['install_prefix']}/current" do
+  to "#{node['opensim']['install_prefix']}/opensim-#{node[:opensim][:version]}-bin"
+end
