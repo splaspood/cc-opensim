@@ -21,4 +21,19 @@
 
 include_recipe "mysql::server"
 
+::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 
+node.set_unless['opensim']['database']['password'] = secure_password
+
+mysql_connection_info = {:host => "localhost", :username => 'root', :password => node['mysql']['server_root_password']}
+
+mysql_database node['opensim']['database']['name'] do
+  connection mysql_connection_info
+  action :create
+end
+
+mysql_database_user node['opensim']['database']['username'] do
+  connection mysql_connection_info
+  password node['opensim']['database']['password']
+  action :create
+end
