@@ -63,11 +63,30 @@ template "#{node['opensim']['install_prefix']}/current/bin/Regions/Regions.ini" 
   source "regions.ini.erb"
 end
 
-template "#{node['opensim']['install_prefix']}/config/config-include/StandaloneCommon.ini" do
-  owner "opensim"
-  mode "0644"
-  variables( :database_type => node['opensim']['database'] )
-  source "StandaloneCommon.ini.erb"
+case node['opensim']['database']['type']
+when "mysql"
+  database_server = search( :node, "role:mysql-server AND recipe:opensim\\:\\:database AND chef_environment:#{node.chef_environment}" ).first || {}
+
+  template "#{node['opensim']['install_prefix']}/config/config-include/StandaloneCommon.ini" do
+    owner "opensim"
+    mode "0644"
+    variables(
+      :database_type     => "mysql",
+      :database_host     => database_server['ip_address'],
+      :database_username => database_server['opensim']['database']['username'],
+      :database_password => database_server['opensim']['database']['password'],
+      :database_name     => database_server['opensim']['database']['name'] )
+    source "StandaloneCommon.ini.erb"
+  end
+when "sqlite"
+  template "#{node['opensim']['install_prefix']}/config/config-include/StandaloneCommon.ini" do
+    owner "opensim"
+    mode "0644"
+    variables( :database_type => 'sqlite' )
+    source "StandaloneCommon.ini.erb"
+  end
+else
+  Chef::Log.error "Unknown database type specified!"
 end
 
 cookbook_file "#{node['opensim']['install_prefix']}/config/OpenSim.ini" do
